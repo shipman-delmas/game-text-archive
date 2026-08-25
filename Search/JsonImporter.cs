@@ -39,7 +39,7 @@ public class JsonImporter (RecordFieldDefinitions recordFieldDefinitions)
         
         // derived data.
         record.SourceFile = Path.GetFileNameWithoutExtension(filePath);
-        record.Timestamp = DateTime.Now;
+        record.ImportedAt = DateTime.Now;
         
         record.Metadata = metadata;
         
