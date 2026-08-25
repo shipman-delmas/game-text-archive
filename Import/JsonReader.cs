@@ -4,16 +4,31 @@ using GameTextArchive.Config;
 
 namespace GameTextArchive.Search;
 
-public class JsonImporter (RecordFieldDefinitions recordFieldDefinitions)
+public class JsonReader ()
 {
-    // method for importing json to text record. separates metadata from core fields.
+    // asynchronously produce json element enumerable sequentially consumable by caller of method.
+    // FIX: find more seamless way to provide filepath?
+    public async IAsyncEnumerable<JsonElement> ReadAsync(string filePath,
+        [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        // opens file as a filestream to read contents sequentially instead of loading all contents into memory at once.
+        await using FileStream stream = File.OpenRead(filePath);
+
+        // iterate each json element and return them sequentially.
+        await foreach (JsonElement element in JsonSerializer.DeserializeAsyncEnumerable<JsonElement>(
+                           stream, cancellationToken: cancellationToken))
+        {
+            yield return element;
+        }
+    }
+    
+    // holding onto this method for reference on data/metadata separation during import.
+    /*
     public TextRecord? ImportJson(string filePath)
     {
-        // read json file to string. parse string to json document. 
         string json = File.ReadAllText(filePath);
         JsonDocument document = JsonDocument.Parse(json);
         
-        // create new text record and new dictionary.
         TextRecord record = new();
         Dictionary<string, JsonElement> metadata = new();
         
@@ -45,4 +60,5 @@ public class JsonImporter (RecordFieldDefinitions recordFieldDefinitions)
         
         return record;
     }
+    */
 }
