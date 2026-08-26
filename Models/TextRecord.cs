@@ -8,8 +8,8 @@ namespace GameTextArchive;
 public class TextRecord
 {
     // basic data fields.
-    public long id { get; set; }
-    public RecordType type { get; set; }
+    public string? id { get; set; }
+    public string? type { get; set; }
     public string? speaker_id { get; set; }
     public string? text { get; set; }
     
