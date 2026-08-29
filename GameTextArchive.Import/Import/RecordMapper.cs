@@ -4,6 +4,8 @@ namespace GameTextArchive.Import;
 
 public class RecordMapper
 {
+    
+    
     // switch cases to map each key-value in existing json element to matching key in new record.
     public TextRecord Map(JsonElement json)
     {
