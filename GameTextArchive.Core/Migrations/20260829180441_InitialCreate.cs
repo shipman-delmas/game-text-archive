@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
 
 #nullable disable
 
-namespace GameTextArchive.Migrations
+namespace GameTextArchive.Core.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -19,9 +18,8 @@ namespace GameTextArchive.Migrations
                 name: "TextRecords",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    type = table.Column<int>(type: "integer", nullable: false),
+                    id = table.Column<string>(type: "text", nullable: false),
+                    type = table.Column<string>(type: "text", nullable: true),
                     speaker_id = table.Column<string>(type: "text", nullable: true),
                     text = table.Column<string>(type: "text", nullable: true),
                     SourceFile = table.Column<string>(type: "text", nullable: false),

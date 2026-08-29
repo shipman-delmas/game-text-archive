@@ -12,10 +12,10 @@ using NpgsqlTypes;
 
 #nullable disable
 
-namespace GameTextArchive.Migrations
+namespace GameTextArchive.Core.Migrations
 {
     [DbContext(typeof(GameTextDbContext))]
-    [Migration("20260825205632_InitialCreate")]
+    [Migration("20260829180441_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -30,11 +30,8 @@ namespace GameTextArchive.Migrations
 
             modelBuilder.Entity("GameTextArchive.TextRecord", b =>
                 {
-                    b.Property<long>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
+                    b.Property<string>("id")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ImportedAt")
                         .HasColumnType("timestamp with time zone");
@@ -55,8 +52,8 @@ namespace GameTextArchive.Migrations
                     b.Property<string>("text")
                         .HasColumnType("text");
 
-                    b.Property<int>("type")
-                        .HasColumnType("integer");
+                    b.Property<string>("type")
+                        .HasColumnType("text");
 
                     b.HasKey("id");
 

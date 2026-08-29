@@ -17,7 +17,15 @@ public class GameTextDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TextRecord>()
-            .Property(x => x.Metadata)
-            .HasColumnType("jsonb");
+                    .Property(x => x.Metadata)
+                    .HasColumnType("jsonb");
+        
+        modelBuilder.Entity<TextRecord>()
+                    .HasGeneratedTsVectorColumn(
+                        p => p.SearchVector,
+                        "english", // dictionary config for normalization, etc.
+                        p => new { p.text })
+                    .HasIndex(p => p.SearchVector)
+                    .HasMethod("GIN");
     }
 }

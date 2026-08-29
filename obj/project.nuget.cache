@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "TkHGzBc2OAs=",
+  "dgSpecHash": "2WX5ng9VaBA=",
   "success": true,
-  "projectFilePath": "C:\\Users\\delma\\OneDrive\\Desktop\\GameTextArchive\\GameTextArchive\\GameTextArchive.csproj",
+  "projectFilePath": "C:\\Users\\delma\\OneDrive\\Desktop\\GameTextArchive\\GameTextArchive.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\delma\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\delma\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.9\\microsoft.aspnetcore.openapi.10.0.9.nupkg.sha512",
@@ -38,9 +38,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'Microsoft.OpenApi' 2.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-v5pm-xwqc-g5wc",
-      "projectPath": "C:\\Users\\delma\\OneDrive\\Desktop\\GameTextArchive\\GameTextArchive\\GameTextArchive.csproj",
+      "projectPath": "C:\\Users\\delma\\OneDrive\\Desktop\\GameTextArchive\\GameTextArchive.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\delma\\OneDrive\\Desktop\\GameTextArchive\\GameTextArchive\\GameTextArchive.csproj",
+      "filePath": "C:\\Users\\delma\\OneDrive\\Desktop\\GameTextArchive\\GameTextArchive.csproj",
       "libraryId": "Microsoft.OpenApi",
       "targetGraphs": [
         "net10.0"

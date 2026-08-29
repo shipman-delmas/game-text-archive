@@ -12,14 +12,18 @@ public class RecordImporter (GameTextDbContext context, JsonReader reader, Recor
     private const int BatchSize = 1000; 
     
     // connects reader and mapper with database via database context.
-    public async Task ImportAsync(string filePath, CancellationToken cancellationToken = default)
+    public async Task ImportAsync(string outputFile, CancellationToken cancellationToken = default)
     {
         int count = 0;
         
         // iterate json elements in async file stream and map each to record.
-        await foreach (JsonElement json in reader.ReadAsync(filePath, cancellationToken))
+        await foreach (JsonElement json in reader.ReadAsync(outputFile, cancellationToken))
         {
             TextRecord record = mapper.Map(json);
+
+            record.SourceFile = outputFile;
+            record.ImportedAt = DateTime.Now;
+            
             // add mapped records to database set in database context.
             context.TextRecords.Add(record);
 

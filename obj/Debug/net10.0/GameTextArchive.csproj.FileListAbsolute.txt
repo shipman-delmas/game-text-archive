@@ -244,3 +244,15 @@ C:\Users\delma\OneDrive\Desktop\GameTextArchive\GameTextArchive\obj\Debug\net10.
 C:\Users\delma\OneDrive\Desktop\GameTextArchive\GameTextArchive\obj\Debug\net10.0\GameTextArchive.pdb
 C:\Users\delma\OneDrive\Desktop\GameTextArchive\GameTextArchive\obj\Debug\net10.0\GameTextArchive.genruntimeconfig.cache
 C:\Users\delma\OneDrive\Desktop\GameTextArchive\GameTextArchive\obj\Debug\net10.0\ref\GameTextArchive.dll
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\GameTextArchive.csproj.AssemblyReference.cache
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\GameTextArchive.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\GameTextArchive.AssemblyInfoInputs.cache
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\GameTextArchive.AssemblyInfo.cs
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\GameTextArchive.csproj.CoreCompileInputs.cache
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\GameTextArchive.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\GameTextArchive.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\GameTextArchive.sourcelink.json
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\GameTextArchive.dll
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\refint\GameTextArchive.dll
+C:\Users\delma\OneDrive\Desktop\GameTextArchive\obj\Debug\net10.0\GameTextArchive.pdb
