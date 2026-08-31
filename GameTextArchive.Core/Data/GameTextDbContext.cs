@@ -24,7 +24,7 @@ public class GameTextDbContext : DbContext
                     .HasGeneratedTsVectorColumn(
                         p => p.SearchVector,
                         "english", // dictionary config for normalization, etc.
-                        p => new { p.text })
+                        p => new { p.Text })
                     .HasIndex(p => p.SearchVector)
                     .HasMethod("GIN");
     }

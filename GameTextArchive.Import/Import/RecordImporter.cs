@@ -22,7 +22,7 @@ public class RecordImporter (GameTextDbContext context, JsonReader reader, Recor
             TextRecord record = mapper.Map(json);
 
             record.SourceFile = outputFile;
-            record.ImportedAt = DateTime.Now;
+            record.ImportedAt = DateTime.UtcNow;
             
             // add mapped records to database set in database context.
             context.TextRecords.Add(record);

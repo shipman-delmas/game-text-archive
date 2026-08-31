@@ -20,19 +20,19 @@ public class RecordMapper
             {
                 // sets extension property of new record to value of matching key in existing json element.
                 case "id":
-                    record.id = property.Value.GetString();
+                    record.EditorId = property.Value.GetString();
                     break;
                 
                 case "type":
-                    record.type = property.Value.GetString();
+                    record.Type = property.Value.GetString();
                     break;
                 
                 case "speaker_id":
-                    record.speaker_id = property.Value.GetString();
+                    record.SpeakerId = property.Value.GetString();
                     break;
                 
                 case "text":
-                    record.text = property.Value.GetString();
+                    record.Text = property.Value.GetString();
                     break;
                 
                 // key of same name found or created and assigned value from json element property.

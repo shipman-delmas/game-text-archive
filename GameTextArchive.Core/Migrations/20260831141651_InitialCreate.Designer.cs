@@ -15,7 +15,7 @@ using NpgsqlTypes;
 namespace GameTextArchive.Core.Migrations
 {
     [DbContext(typeof(GameTextDbContext))]
-    [Migration("20260829180441_InitialCreate")]
+    [Migration("20260831141651_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -30,7 +30,11 @@ namespace GameTextArchive.Core.Migrations
 
             modelBuilder.Entity("GameTextArchive.TextRecord", b =>
                 {
-                    b.Property<string>("id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EditorId")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("ImportedAt")
@@ -40,22 +44,29 @@ namespace GameTextArchive.Core.Migrations
                         .HasColumnType("jsonb");
 
                     b.Property<NpgsqlTsVector>("SearchVector")
-                        .HasColumnType("tsvector");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "english")
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Text" });
 
                     b.Property<string>("SourceFile")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("speaker_id")
+                    b.Property<string>("SpeakerId")
                         .HasColumnType("text");
 
-                    b.Property<string>("text")
+                    b.Property<string>("Text")
                         .HasColumnType("text");
 
-                    b.Property<string>("type")
+                    b.Property<string>("Type")
                         .HasColumnType("text");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
+
+                    b.HasIndex("SearchVector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
 
                     b.ToTable("TextRecords");
                 });

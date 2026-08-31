@@ -7,11 +7,14 @@ namespace GameTextArchive;
 // database table.
 public class TextRecord
 {
+    // postgres id.
+    public Guid Id { get; set; } = Guid.NewGuid();
+    
     // basic data fields.
-    public string? id { get; set; }
-    public string? type { get; set; }
-    public string? speaker_id { get; set; }
-    public string? text { get; set; }
+    public string? EditorId { get; set; }
+    public string? Type { get; set; }
+    public string? SpeakerId { get; set; }
+    public string? Text { get; set; }
     
     // derived data fields.
     public string SourceFile { get; set; }

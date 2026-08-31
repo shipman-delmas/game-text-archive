@@ -13,7 +13,7 @@ public class Tes3ConvRunner
             using Process process = new();
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.FileName = "tes3conv.exe";
-            process.StartInfo.Arguments = $"tes3conv \"{inputFile}\" \"{outputFile}\"";
+            process.StartInfo.Arguments = $"\"{inputFile}\" \"{outputFile}\"";
             process.StartInfo.CreateNoWindow = false;
 
             process.Start();

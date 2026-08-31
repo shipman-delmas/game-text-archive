@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Npgsql;
 
 namespace GameTextArchive.Import;
 
@@ -14,9 +15,27 @@ public class Program
         // generic host created by host app builder.
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
         
-        // registers database context. passes config options to ef core base class.
-        builder.Services.AddDbContext<GameTextDbContext>(options => options.UseNpgsql(
-            builder.Configuration.GetConnectionString("DefaultConnection")));
+        // check for and configure connection string
+        string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+        Console.WriteLine($"Connection string loaded: {!string.IsNullOrWhiteSpace(connectionString)}");
+
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                "DefaultConnection was not loaded."
+            );
+        }
+        
+        // configure Npgsql and create data builder. passes connection string.
+        NpgsqlDataSourceBuilder dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+        // allow serialization of common runtime objects (specifically for metadata dictionary to jsonb).
+        dataSourceBuilder.EnableDynamicJson();
+        // build data source configured by npgsql.
+        NpgsqlDataSource dataSource = dataSourceBuilder.Build();
+        
+        // registers database context. passes npgsql data source and connection string..
+        builder.Services.AddDbContext<GameTextDbContext>(options => options.UseNpgsql(dataSource));
         
         // registers importer services with dependency injection container (DI).
         builder.Services.AddScoped<JsonReader>();
@@ -52,10 +71,6 @@ public class Program
         // converter creates output file.
         if ((inputFile is not null) && (outputFile is not null)) 
             converter.Execute(inputFile, outputFile);
-        
-        Console.WriteLine($"{inputFile} successfully converted to {outputFile}.");
-        
-        Console.WriteLine("Attempting data import...");
 
         // importer receives output file.
         if (outputFile is not null) 
