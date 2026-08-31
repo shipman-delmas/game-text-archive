@@ -8,6 +8,9 @@ using Npgsql;
 
 namespace GameTextArchive.Import;
 
+
+// FIX: CREATE OUTPUT JSON W/O USER INPUT.
+//      IMPLEMENT FILE PICKER.
 public class Program
 {
     public static async Task Main(string[] args)

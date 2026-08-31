@@ -2,6 +2,7 @@ using GameTextArchive;
 using Microsoft.EntityFrameworkCore;
 using GameTextArchive.Data;
 using GameTextArchive.Search;
+using Npgsql;
 
 public class Program
 {
@@ -9,12 +10,32 @@ public class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         
-        builder.Services.AddDbContext<GameTextDbContext>(options => options.UseNpgsql(
-                builder.Configuration.GetConnectionString("DefaultConnection")));
+        string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        
+        NpgsqlDataSourceBuilder dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+
+        dataSourceBuilder.EnableDynamicJson();
+
+        NpgsqlDataSource dataSource = dataSourceBuilder.Build();
+
+        builder.Services.AddDbContext<GameTextDbContext>(options => options.UseNpgsql(dataSource));
 
         builder.Services.AddScoped<SearchService>();
         
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("ReactFrontend", policy =>
+            {
+                policy
+                    .WithOrigins("http://localhost:5173")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+        
         var app = builder.Build();
+        
+        app.UseCors("ReactFrontend");
         
         app.MapGet("/api/text-records", async (GameTextDbContext db) =>
         {

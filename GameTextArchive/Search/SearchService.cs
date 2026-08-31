@@ -13,17 +13,16 @@ public class SearchService(GameTextDbContext dbContext)
     // the record in database and a rank based on matching lexeme frequency.
     public async Task<List<SearchResult>> SearchAsync(string query)
     {
-        // convert user query to ts_query.
-        var tsQuery = EF.Functions.WebSearchToTsQuery(query);
-        
         // filters record table for matching text in ts_vector columns.
         // ranks matching records based on frequency of matching lexemes in descending order.
         return await context.TextRecords
-            .Where(p => p.SearchVector.Matches(tsQuery))
+            .Where(p => p.SearchVector != null && 
+                        p.SearchVector.Matches(
+                            EF.Functions.WebSearchToTsQuery(query)))
             .Select(p => new SearchResult
             {
                 Record = p,
-                Rank = p.SearchVector.Rank(tsQuery)
+                Rank = p.SearchVector!.Rank(EF.Functions.WebSearchToTsQuery(query))
             })
             .OrderByDescending(x => x.Rank)
             .Take(100)
