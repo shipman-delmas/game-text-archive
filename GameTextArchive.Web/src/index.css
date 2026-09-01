@@ -15,10 +15,18 @@ select {
     font-family: inherit;
 }
 
-body {
+.home-background {
     background-image: url("/vivec-and-ruddy-man.png");
     background-size: 1000px auto;
     background-position: center bottom;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.search-background {
+    background-image: url("/concept-corprus.jpg");
+    background-size: 200px 200px;
+    background-position: right bottom;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
