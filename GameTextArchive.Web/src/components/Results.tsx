@@ -97,17 +97,23 @@ export default function SearchResults({ results, query, currentPage, totalPages,
                         key={result.record.id}
                         className="w-full rounded-lg border p-4">
 
-                        {result.record.name?.trim() && (
-                            <h3>[Name: {result.record.name.trim()}]</h3>
-                        )}
+                        <div className="flex gap-4">
+                            {result.record.name?.trim() && (
+                                <h3>[Name: {result.record.name.trim()}]</h3>
+                            )}
 
-                        {result.record.type?.trim() && (
-                            <h3>[Record Type: {result.record.type.trim()}]</h3>
-                        )}
+                            {result.record.type?.trim() && (
+                                <h3>[Record Type: {result.record.type.trim()}]</h3>
+                            )}
 
-                        {result.record.speakerId?.trim() && (
-                            <h3>[Speaker: {result.record.speakerId.trim()}]</h3>
-                        )}
+                            {result.record.metadata?.data?.dialogue_type && (
+                                <h3> [Dialogue Type: {result.record.metadata.data?.dialogue_type}] </h3>
+                            )}
+
+                            {result.record.speakerId?.trim() && (
+                                <h3>[Speaker: {result.record.speakerId.trim()}]</h3>
+                            )}
+                        </div>
 
                         <br />
 

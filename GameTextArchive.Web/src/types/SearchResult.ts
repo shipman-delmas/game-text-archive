@@ -11,7 +11,11 @@ export interface SearchResult
         text: string | null;
         sourceFile: string;
         importedAt: string;
-        metadata: Record<string, unknown> | null;
+        metadata: {
+            data?: {
+                dialogue_type?: string;
+            };
+        } | null;
     };
     rank: number;
 }
