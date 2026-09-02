@@ -6,6 +6,7 @@ export interface SearchResult
         id: string;
         editorId: string;
         type: string;
+        name: string;
         speakerId: string | null;
         text: string | null;
         sourceFile: string;

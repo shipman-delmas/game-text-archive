@@ -13,18 +13,6 @@ export async function search(query: string): Promise<SearchResult[]>
     // fetch is the http request and passes out url + encoded query.
     const response = await fetch(`${API_BASE_URL}/api/search?query=${encodeURIComponent(query)}`);
     
-    //DEBUGGING.
-    if (!response.ok) 
-    {
-        const errorBody = await response.text();
-
-        console.error("ASP.NET API error:", errorBody);
-
-        throw new Error(
-            `Search request failed (${response.status}): ${errorBody}`
-        );
-    }
-    
     // asp.net returns json in response to http request.
     // react converts to array of search result objects.
     return await response.json();

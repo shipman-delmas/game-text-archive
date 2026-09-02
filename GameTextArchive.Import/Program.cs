@@ -64,20 +64,18 @@ public class Program
         
         Console.WriteLine("--------------------------------------------------");
         
-        Console.WriteLine("What is the desired output file name? ");
-        string? outputFile = Console.ReadLine();
+        // path class combine method to create string file path for new directory.
+        string outputDirectory = Path.Combine(builder.Environment.ContentRootPath, "Converted");
+        // create new directory with new file path.
+        Directory.CreateDirectory(outputDirectory);
+        // combine method creates file path for output json.
+        string outputFile = Path.Combine(outputDirectory, $"{Path.GetFileNameWithoutExtension(inputFile)}.json");
         
-        Console.WriteLine("--------------------------------------------------");
+        // execute ingestion pipeline.
+        if ((inputFile is not null)) converter.Execute(inputFile, outputFile);
         
-        Console.WriteLine("Attempting file conversion...");
-        
-        // converter creates output file.
-        if ((inputFile is not null) && (outputFile is not null)) 
-            converter.Execute(inputFile, outputFile);
-
         // importer receives output file.
-        if (outputFile is not null) 
-            await importer.ImportAsync(outputFile);
+        await importer.ImportAsync(outputFile);
         
         Console.WriteLine($"{outputFile} successfully imported to database.");
         

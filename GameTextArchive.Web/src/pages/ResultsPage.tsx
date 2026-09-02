@@ -38,6 +38,7 @@ function SearchResultsPage() {
         performSearch();
     }, [query]);
 
+    // FIX: CLEAN UP WITH CSS CLASSES. VERY MESSY.
     return (
         <main className="search-background min-h-screen p-8">
             <div className="mx-auto max-w-4xl">
@@ -56,7 +57,7 @@ function SearchResultsPage() {
                 )}
 
                 <div className="mt-8">
-                    <Results results={results} />
+                    <Results results={results} query={query} />
                 </div>
             </div>
         </main>

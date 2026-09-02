@@ -27,6 +27,10 @@ public class RecordMapper
                     record.Type = property.Value.GetString();
                     break;
                 
+                case "name":
+                    record.Name = property.Value.GetString();
+                    break;
+                
                 case "speaker_id":
                     record.SpeakerId = property.Value.GetString();
                     break;

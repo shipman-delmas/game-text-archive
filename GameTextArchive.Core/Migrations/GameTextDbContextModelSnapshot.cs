@@ -40,6 +40,9 @@ namespace GameTextArchive.Core.Migrations
                     b.Property<Dictionary<string, JsonElement>>("Metadata")
                         .HasColumnType("jsonb");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
                     b.Property<NpgsqlTsVector>("SearchVector")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("tsvector")

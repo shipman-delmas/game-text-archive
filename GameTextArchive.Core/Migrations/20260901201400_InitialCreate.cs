@@ -21,6 +21,7 @@ namespace GameTextArchive.Core.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     EditorId = table.Column<string>(type: "text", nullable: true),
                     Type = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
                     SpeakerId = table.Column<string>(type: "text", nullable: true),
                     Text = table.Column<string>(type: "text", nullable: true),
                     SourceFile = table.Column<string>(type: "text", nullable: false),

@@ -13,6 +13,7 @@ public class TextRecord
     // basic data fields.
     public string? EditorId { get; set; }
     public string? Type { get; set; }
+    public string? Name { get; set; }
     public string? SpeakerId { get; set; }
     public string? Text { get; set; }
     

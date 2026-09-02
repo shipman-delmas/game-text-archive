@@ -15,7 +15,7 @@ using NpgsqlTypes;
 namespace GameTextArchive.Core.Migrations
 {
     [DbContext(typeof(GameTextDbContext))]
-    [Migration("20260831141651_InitialCreate")]
+    [Migration("20260901201400_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -42,6 +42,9 @@ namespace GameTextArchive.Core.Migrations
 
                     b.Property<Dictionary<string, JsonElement>>("Metadata")
                         .HasColumnType("jsonb");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
 
                     b.Property<NpgsqlTsVector>("SearchVector")
                         .ValueGeneratedOnAddOrUpdate()

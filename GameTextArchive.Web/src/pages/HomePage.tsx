@@ -2,11 +2,16 @@
 import { useNavigate } from "react-router-dom";
 
 // moved search function/coordination from app.tsx.
-function Home() {
+function Home() 
+{
+    // react state for search box. call navigate function for router.
     const [query, setQuery] = useState("");
     const navigate = useNavigate();
 
-    function handleSearch() {
+    // return nothing if query empty. 
+    // else, construct and route to search results url.
+    function handleSearch() 
+    {
         if (query.trim() === "") {
             return;
         }
