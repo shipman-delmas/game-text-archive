@@ -1,16 +1,15 @@
-﻿import { useState } from "react";
-import type { SearchResult } from "../types/SearchResult";
+﻿import type { SearchResult } from "../types/SearchResult";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
-interface SearchResultProps 
+interface SearchResultProps
 {
     results: SearchResult[];
     query: string;
+    currentPage: number;
+    totalPages: number;
+    setCurrentPage: (page: number) => void;
 }
-
-// FIX: MOVE PAGINATION TO SEARCH API.
-const RESULTS_PER_PAGE = 10;
 
 // if text not null, find and replace formatting tags.
 function cleanText(text: string | null): string 
@@ -78,35 +77,22 @@ function createExcerpt(text: string | null, query: string, radius = 100): ReactN
     // then substrings in order with query term in highlighted format.
     return (
         <>
-            {start > 0 && "..."} {beforeMatch}
-            <mark className="rounded bg-yellow-200 px-1"> {match} </mark>
-            {afterMatch} {end < cleanedText.length && "..."}
+            {start > 0 && "..."}{beforeMatch}
+            <b>{match}</b>
+            {afterMatch}{end < cleanedText.length && "..."}
         </>
     );
 }
 
 // Maps search results to UI elements.
-export default function SearchResults({ results, query }: SearchResultProps) 
+export default function SearchResults({ results, query, currentPage, totalPages, setCurrentPage }: SearchResultProps) 
 {
-    // calculate number pages and where current page starts.
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const totalPages = Math.ceil(results.length / RESULTS_PER_PAGE);
-
-    const startIndex = (currentPage - 1) * RESULTS_PER_PAGE;
-
-    // get part of array that will be represented on the page.
-    const pageResults = results.slice(
-        startIndex,
-        startIndex + RESULTS_PER_PAGE
-    );
-    
     // individual result entry formatting.
     // pagination buttons receive react state variables.
     return (
         <div>
             <div className="space-y-4">
-                {pageResults.map((result) => (
+                {results.map((result) => (
                     <article
                         key={result.record.id}
                         className="w-full rounded-lg border p-4">

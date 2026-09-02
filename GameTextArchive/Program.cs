@@ -47,9 +47,9 @@ public class Program
         });
 
         // search function from search service to search database. 
-        app.MapGet("/api/search", async (string query, SearchService searchService) =>
+        app.MapGet("/api/search", async (string query, int page, int pageSize, SearchService searchService) =>
         {
-            var results = await searchService.SearchAsync(query);
+            var results = await searchService.SearchAsync(query, page, pageSize);
             return Results.Ok(results);
         });
         

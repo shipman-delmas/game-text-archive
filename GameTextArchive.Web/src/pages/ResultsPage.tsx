@@ -13,6 +13,11 @@ function SearchResultsPage() {
     // react state.
     const [results, setResults] = useState<SearchResult[]>([]);
     const [error, setError] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalResults, setTotalResults] = useState(0);
+    
+    const pageSize = 25;
+    const totalPages = Math.ceil(totalResults / pageSize);
 
     // effect is result of calling api.
     useEffect(() => {
@@ -26,9 +31,11 @@ function SearchResultsPage() {
             try {
                 setError("");
 
-                const searchResults = await search(query);
+                const searchResults = await search(query, currentPage, pageSize);
 
-                setResults(searchResults);
+                // array of results and int of total number results. 
+                setResults(searchResults.items);
+                setTotalResults(searchResults.totalCount);
             } catch (error) {
                 console.error(error);
                 setError("Search failed.");
@@ -36,7 +43,7 @@ function SearchResultsPage() {
         }
 
         performSearch();
-    }, [query]);
+    }, [query, currentPage]);
 
     // FIX: CLEAN UP WITH CSS CLASSES. VERY MESSY.
     return (
@@ -57,7 +64,8 @@ function SearchResultsPage() {
                 )}
 
                 <div className="mt-8">
-                    <Results results={results} query={query} />
+                    <Results results={results} query={query} 
+                             currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage}/>
                 </div>
             </div>
         </main>
