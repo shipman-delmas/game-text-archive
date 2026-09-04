@@ -13,12 +13,17 @@ public class GameTextDbContext : DbContext
     // creates a set of db entities of type text record and exposes a getter.
     public DbSet<TextRecord> TextRecords => Set<TextRecord>();
     
-    // map metadata dictionary to jsonb.
+    // more entities for frequency analysis.
+    public DbSet<Lexeme> Lexemes => Set<Lexeme>();
+    public DbSet<TextRecordLexeme> TextRecordLexemes => Set<TextRecordLexeme>();
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // map metadata dictionary to jsonb.
         modelBuilder.Entity<TextRecord>()
                     .Property(x => x.Metadata)
                     .HasColumnType("jsonb");
+        
         
         modelBuilder.Entity<TextRecord>()
                     .HasGeneratedTsVectorColumn(

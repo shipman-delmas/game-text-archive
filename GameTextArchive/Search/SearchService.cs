@@ -24,7 +24,7 @@ public class SearchService(GameTextDbContext dbContext)
             .Select(p => new SearchResult
             {
                 Record = p,
-                Rank = p.SearchVector!.Rank(EF.Functions.WebSearchToTsQuery(query))
+                Rank = p.SearchVector!.RankCoverDensity(EF.Functions.WebSearchToTsQuery(query))
             })
             .OrderByDescending(x => x.Rank);
 

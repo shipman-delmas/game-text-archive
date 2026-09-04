@@ -20,6 +20,9 @@ public class RecordImporter (GameTextDbContext context, JsonReader reader, Recor
         await foreach (JsonElement json in reader.ReadAsync(outputFile, cancellationToken))
         {
             TextRecord record = mapper.Map(json);
+            
+            // after mapping and before sending entity to db, call method for frequency analysis.
+            // frequencyAnalyst.FrequencyAnalysis(record);
 
             record.SourceFile = outputFile;
             record.ImportedAt = DateTime.UtcNow;
