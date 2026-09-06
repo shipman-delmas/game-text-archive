@@ -3,12 +3,14 @@
 // join model and table.
 public class TextRecordLexeme
 {
-    private Guid recordId { get; set; } 
-    private int lexemeId { get; set; }
+    // FIX; IMPLEMENT COMPOSITE KEY
+    // CURRENTLY KIND USELESS
+    public Guid recordId { get; private set; } 
+    public int lexemeId { get; private set; }
     
-    private TextRecord record { get; set;}
-    private Lexeme lexeme { get; set; }
+    public TextRecord record { get; set;}
+    public Lexeme lexeme { get; set; }
     
     // word frequency in this specific record.
-    private int frequency { get; set; }
+    public int frequency { get; set; }
 }

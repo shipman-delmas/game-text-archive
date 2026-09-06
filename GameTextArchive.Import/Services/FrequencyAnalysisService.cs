@@ -11,41 +11,61 @@ public class FrequencyAnalysisService (GameTextDbContext context)
     // method for checking for lexeme, creating if not yet, and incrementing frequency.
     public async Task FrequencyAnalysis(TextRecord record)
     {
-        Lexeme lexeme = new();
-
         // check if vector is null (many will be).
         // iterate each npgsql vector lexeme in search vector and check if it exists in lexeme table.
         // if not, create and store it. increment frequency for said lexeme. 
         if (record.SearchVector != null)
             foreach (NpgsqlTypes.NpgsqlTsVector.Lexeme word in record.SearchVector)
             {
-                // HOW TO STORE ACTUAL LEXEME IN VAR SO WE CAN ++LEXEME.FREQUENCY
-                // WITHOUT QUERYING DB TWICE?
-                bool lexemeExists = await context.Lexemes
-                    .AnyAsync(l => l.Equals(word));
+                Lexeme lexeme;
+                
+                // nullable query for text archive lexeme matching npgsql lexeme. 
+                // iterates list for text archive lexeme with value matching npgsql vector lexeme text.
+                Lexeme? existingLexeme = await Context.Lexemes
+                        .SingleOrDefaultAsync(l => l.Value == word.Text);
 
-                // IF WE CAN REFERENCE LEXEME IN ONE QUERY, USE !LEXEME IS NULL.
-                if (!lexemeExists)
+                // if query returns null, create text archive lexeme.
+                if (existingLexeme is null)
                 {
-                    lexeme.Value = word.ToString();
-                    context.Lexemes.Add(lexeme);
+                    lexeme = new()
+                    {
+                        Value = word.Text,
+                        Frequency = word.Count
+                    };
+                    
+                    Context.Lexemes.Add(lexeme);
+                }
+                else
+                {
+                    lexeme = existingLexeme;
+                    lexeme.Frequency += word.Count;
                 }
                 
-                // INCREMENT LEXEME FREQUENCY.
-                // HERE.
-            }
+                TextRecordLexeme? textRecordLexeme = await Context.TextRecordLexemes
+                    .SingleOrDefaultAsync(t => t.lexeme == lexeme
+                                               && t.record == record);
 
-        var recordLexeme = await Join(record, lexeme);
-        context.TextRecordLexemes.Add(recordLexeme);
+                if (textRecordLexeme is null)
+                {
+                    Context.TextRecordLexemes.Add(Join(record, lexeme, word.Count));
+                }
+                else
+                {
+                    textRecordLexeme.frequency += word.Count;
+                }
+            }
+        
+        await Context.SaveChangesAsync();
     }
     
     // method for creating join model and populating all data for specific record-lexeme combinations. 
-    private async Task<TextRecordLexeme> Join(TextRecord record, Lexeme lexeme)
+    private TextRecordLexeme Join(TextRecord record, Lexeme lexeme, int frequency)
     {
-        TextRecordLexeme recordLexeme = new();
-        
-        // ASSIGN VALUES TO RECORD-LEXEME. 
-
-        return recordLexeme;
+        return new TextRecordLexeme
+        {
+            record = record,
+            lexeme = lexeme,
+            frequency = frequency
+        };
     }
 }
