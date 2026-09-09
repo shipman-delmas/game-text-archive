@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace GameTextArchive.Import.Services;
 using GameTextArchive.Data;
@@ -9,63 +10,58 @@ public class FrequencyAnalysisService (GameTextDbContext context)
     private GameTextDbContext Context = context;
     
     // method for checking for lexeme, creating if not yet, and incrementing frequency.
-    public async Task FrequencyAnalysis(TextRecord record)
+    public async Task FrequencyAnalysis(List<TextRecord> batch)
     {
-        // check if vector is null (many will be).
-        // iterate each npgsql vector lexeme in search vector and check if it exists in lexeme table.
-        // if not, create and store it. increment frequency for said lexeme. 
-        if (record.SearchVector != null)
-            foreach (NpgsqlTypes.NpgsqlTsVector.Lexeme word in record.SearchVector)
+        HashSet<String> vectorValues = [];
+        
+        // add text value of all npgsql lexeme in record batch to hashset for future query. 
+        foreach (var record in batch)
+        {
+            if (record.SearchVector is null) continue;
+            
+            foreach (var word in record.SearchVector)
             {
-                Lexeme lexeme;
-                
-                // nullable query for text archive lexeme matching npgsql lexeme. 
-                // iterates list for text archive lexeme with value matching npgsql vector lexeme text.
-                Lexeme? existingLexeme = await Context.Lexemes
-                        .SingleOrDefaultAsync(l => l.Value == word.Text);
+                vectorValues.Add(word.Text);
+            }
+        }
 
-                // if query returns null, create text archive lexeme.
-                if (existingLexeme is null)
+        // single query to database to check for existing archive lexemes.
+        // (i.e. a lexeme like Balmora would probably already exist from previous record.)
+        var existingArchiveLexemes = await Context.Lexemes
+            .Where(l => l.Value != null && vectorValues.Contains(l.Value))
+            .ToListAsync();
+            
+        // DICTIONARY POPULATION GOES HERE.
+        Dictionary<string, Lexeme> lexemeCache = existingArchiveLexemes.ToDictionary(l => l.Value);
+        
+        foreach (var record in batch)
+        {
+            if (record.SearchVector is null) continue;
+            
+            foreach (var word in record.SearchVector)
+            {
+                if (!lexemeCache.TryGetValue(word.Text, out Lexeme? archiveLexeme))
                 {
-                    lexeme = new()
+                    archiveLexeme = new Lexeme()
                     {
                         Value = word.Text,
                         Frequency = word.Count
                     };
-                    
-                    Context.Lexemes.Add(lexeme);
+                    Context.Lexemes.Add(archiveLexeme);
+                    lexemeCache.Add(word.Text, archiveLexeme);
                 }
-                else
+                // if not null, if archive lexeme is found and returned, increment the global frequency for that
+                // lexeme by record frequency. 
+                else { archiveLexeme.Frequency += word.Count; }
+            
+                // CREATE NEW JOIN ENTITIES HERE. 
+                Context.TextRecordLexemes.Add(new TextRecordLexeme
                 {
-                    lexeme = existingLexeme;
-                    lexeme.Frequency += word.Count;
-                }
-                
-                TextRecordLexeme? textRecordLexeme = await Context.TextRecordLexemes
-                    .SingleOrDefaultAsync(t => t.lexeme == lexeme
-                                               && t.record == record);
-
-                if (textRecordLexeme is null)
-                {
-                    Context.TextRecordLexemes.Add(Join(record, lexeme, word.Count));
-                }
-                else
-                {
-                    textRecordLexeme.frequency += word.Count;
-                }
+                    record = record,
+                    lexeme = archiveLexeme,
+                    frequency = word.Count
+                });
             }
-        
-        await Context.SaveChangesAsync();
-    }
-    
-    // method for creating join model and populating all data for specific record-lexeme combinations. 
-    private TextRecordLexeme Join(TextRecord record, Lexeme lexeme, int frequency)
-    {
-        return new TextRecordLexeme
-        {
-            record = record,
-            lexeme = lexeme,
-            frequency = frequency
-        };
+        }
     }
 }

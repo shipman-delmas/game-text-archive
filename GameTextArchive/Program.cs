@@ -56,7 +56,7 @@ public class Program
         // directly get record from database via global identifier. 
         app.MapGet("/api/records/{id}", async (Guid id, GameTextDbContext db) =>
         {
-            var record = await db.TextRecords.FirstOrDefaultAsync(r => r.Id == id);
+            var record = await db.TextRecords.FirstOrDefaultAsync(r => r.recordId == id);
 
             if (record == null)
             {

@@ -25,9 +25,29 @@ namespace GameTextArchive.Core.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("GameTextArchive.Lexeme", b =>
+                {
+                    b.Property<Guid>("lexemeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("Frequency")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("lexemeId");
+
+                    b.HasIndex("Value")
+                        .IsUnique();
+
+                    b.ToTable("Lexemes");
+                });
+
             modelBuilder.Entity("GameTextArchive.TextRecord", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("recordId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -62,13 +82,50 @@ namespace GameTextArchive.Core.Migrations
                     b.Property<string>("Type")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("recordId");
 
                     b.HasIndex("SearchVector");
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
 
                     b.ToTable("TextRecords");
+                });
+
+            modelBuilder.Entity("GameTextArchive.TextRecordLexeme", b =>
+                {
+                    b.Property<Guid>("recordId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("lexemeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("frequency")
+                        .HasColumnType("integer");
+
+                    b.HasKey("recordId", "lexemeId");
+
+                    b.HasIndex("lexemeId");
+
+                    b.ToTable("TextRecordLexemes");
+                });
+
+            modelBuilder.Entity("GameTextArchive.TextRecordLexeme", b =>
+                {
+                    b.HasOne("GameTextArchive.Lexeme", "lexeme")
+                        .WithMany()
+                        .HasForeignKey("lexemeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameTextArchive.TextRecord", "record")
+                        .WithMany()
+                        .HasForeignKey("recordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("lexeme");
+
+                    b.Navigation("record");
                 });
 #pragma warning restore 612, 618
         }

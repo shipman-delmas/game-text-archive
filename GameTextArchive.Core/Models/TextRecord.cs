@@ -8,7 +8,7 @@ namespace GameTextArchive;
 public class TextRecord
 {
     // postgres id.
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid recordId { get; set; } = Guid.NewGuid();
     
     // basic data fields.
     public string? EditorId { get; set; }
