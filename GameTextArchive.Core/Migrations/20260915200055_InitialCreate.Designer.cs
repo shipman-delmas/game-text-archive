@@ -15,7 +15,7 @@ using NpgsqlTypes;
 namespace GameTextArchive.Core.Migrations
 {
     [DbContext(typeof(GameTextDbContext))]
-    [Migration("20260909200117_InitialCreate")]
+    [Migration("20260915200055_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

@@ -94,7 +94,7 @@ export default function SearchResults({ results, query, currentPage, totalPages,
             <div className="space-y-4">
                 {results.map((result) => (
                     <article
-                        key={result.record.id}
+                        key={result.record.recordId}
                         className="w-full rounded-lg border p-4">
 
                         <div className="flex gap-4">
@@ -120,7 +120,7 @@ export default function SearchResults({ results, query, currentPage, totalPages,
                         <p>{createExcerpt(result.record.text, query)}</p>
 
                         <Link
-                            to={`/records/${result.record.id}`}
+                            to={`/records/${result.record.recordId}`}
                             className="mt-3 inline-block text-blue-600 hover:underline"
                         >
                             View full record

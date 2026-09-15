@@ -3,7 +3,7 @@
 export interface SearchResult 
 {
     record: {
-        id: string;
+        recordId: string;
         editorId: string;
         type: string;
         name: string;
