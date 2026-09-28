@@ -1,14 +1,41 @@
 using GameTextArchive;
 using Microsoft.EntityFrameworkCore;
 using GameTextArchive.Data;
+using GameTextArchive.Models;
 using GameTextArchive.Search;
 using Npgsql;
+using Microsoft.AspNetCore.OpenApi;
+using Serilog;
+using Serilog.Events;
 
 public class Program
 {
     public static void Main(string[] args)
     {
+        // serilog redirects where ILogger<T> events go.
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .MinimumLevel.Override(
+                "Microsoft.AspNetCore",
+                LogEventLevel.Warning)
+            .MinimumLevel.Override(
+                "Microsoft.EntityFrameworkCore.Database.Command",
+                LogEventLevel.Warning)
+            .Enrich.FromLogContext()
+            .WriteTo.File(
+                "logs/gametextarchive-.log",
+                rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+        
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+        
+        // register serilog.
+        builder.Logging.ClearProviders();
+        builder.Services.AddSerilog();
+        Log.Information("===== SERILOG TEST =====");
+        
+        // machine-readable api description.
+        builder.Services.AddOpenApi();
         
         string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         
@@ -35,6 +62,25 @@ public class Program
         
         var app = builder.Build();
         
+        // serilog middleware condenses asp.net request log collection to single event.
+        app.UseSerilogRequestLogging();
+        
+        // restrict swagger open api to development only.
+        if (app.Environment.IsDevelopment())
+        {
+            app.MapOpenApi();
+            
+            // web interface to read open api document.
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint(
+                    "/openapi/v1.json",
+                    "GameTextArchive API v1");
+    
+                options.DocumentTitle = "GameTextArchive API";
+            });
+        }
+        
         // invoke application after built by builder. 
         app.UseCors("ReactFrontend");
         
@@ -47,24 +93,65 @@ public class Program
         });
 
         // search function from search service to search database. 
-        app.MapGet("/api/search", async (string query, int page, int pageSize, SearchService searchService) =>
-        {
-            var results = await searchService.SearchAsync(query, page, pageSize);
-            return Results.Ok(results);
-        });
+        app.MapGet("/api/search",
+                async (
+                    string query,
+                    int page,
+                    int pageSize,
+                    SearchService searchService, 
+                    ILogger<Program> logger) =>
+                {
+                    logger.LogInformation(
+                        "Search requested for {Query}, page {Page}, page size {PageSize}",
+                        query,
+                        page,
+                        pageSize);
+                    
+                    var results =
+                        await searchService.SearchAsync(
+                            query,
+                            page,
+                            pageSize);
+                    
+                    logger.LogInformation(
+                        "Search completed for {Query} with {ResultCount} results",
+                        query,
+                        results.Items.Count);
+
+                    return Results.Ok(results);
+                })
+            .WithName("SearchTextRecords")
+            .WithTags("Search")
+            .WithSummary("Search text records")
+            .WithDescription(
+                "Searches imported text using full-text search.")
+            .Produces<PagedResult<SearchResult>>(StatusCodes.Status200OK);
         
         // directly get record from database via global identifier. 
-        app.MapGet("/api/records/{id}", async (Guid id, GameTextDbContext db) =>
-        {
-            var record = await db.TextRecords.FirstOrDefaultAsync(r => r.recordId == id);
+        app.MapGet("/api/records/{id}",
+                async (
+                    Guid id,
+                    GameTextDbContext db) =>
+                {
+                    var record =
+                        await db.TextRecords
+                            .FirstOrDefaultAsync(
+                                r => r.recordId == id);
 
-            if (record == null)
-            {
-                return Results.NotFound();
-            }
+                    if (record == null)
+                    {
+                        return Results.NotFound();
+                    }
 
-            return Results.Ok(record);
-        });
+                    return Results.Ok(record);
+                })
+            .WithName("GetTextRecord")
+            .WithTags("Records")
+            .WithSummary("Get text record by ID")
+            .WithDescription(
+                "Retrieves text record by database GUID.")
+            .Produces<TextRecord>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
         
         app.Run();
     }

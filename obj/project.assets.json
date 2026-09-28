@@ -2212,11 +2212,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\delma\\OneDrive\\Desktop\\GameTextArchive\\GameTextArchive.csproj",
+      "projectUniqueName": "C:\\Users\\delma\\OneDrive\\Desktop\\game-text-archive\\GameTextArchive.csproj",
       "projectName": "GameTextArchive",
-      "projectPath": "C:\\Users\\delma\\OneDrive\\Desktop\\GameTextArchive\\GameTextArchive.csproj",
+      "projectPath": "C:\\Users\\delma\\OneDrive\\Desktop\\game-text-archive\\GameTextArchive.csproj",
       "packagesPath": "C:\\Users\\delma\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\delma\\OneDrive\\Desktop\\GameTextArchive\\obj\\",
+      "outputPath": "C:\\Users\\delma\\OneDrive\\Desktop\\game-text-archive\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\delma\\AppData\\Roaming\\NuGet\\NuGet.Config"
