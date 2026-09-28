@@ -16,6 +16,8 @@
 
 Tools/*.json
 
+.vitest/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
