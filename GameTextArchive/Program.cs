@@ -7,6 +7,8 @@ using Npgsql;
 using Microsoft.AspNetCore.OpenApi;
 using Serilog;
 using Serilog.Events;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 public class Program
 {
@@ -50,7 +52,45 @@ public class Program
         // better data handling.
         builder.Services.AddDbContext<GameTextDbContext>(options => options.UseNpgsql(dataSource));
 
+        // cache paginated search results.
+        builder.Services.AddMemoryCache();
+        
         builder.Services.AddScoped<SearchService>();
+        
+        const string ApiRateLimitPolicy = "Api";
+
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.AddPolicy<string>(
+                ApiRateLimitPolicy,
+                httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey:
+                        httpContext.Connection.RemoteIpAddress?.ToString()
+                        ?? "unknown",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 60,
+                            Window = TimeSpan.FromMinutes(1),
+                            AutoReplenishment = true,
+                            QueueLimit = 0
+                        }));
+
+            options.RejectionStatusCode =
+                StatusCodes.Status429TooManyRequests;
+
+            options.OnRejected = async (
+                context,
+                cancellationToken) =>
+            {
+                await context.HttpContext.Response.WriteAsJsonAsync(
+                    new
+                    {
+                        error = "Too many requests. Please try again later."
+                    },
+                    cancellationToken);
+            };
+        });
         
         // cross origin resource sharing for asp.net to react and vice versa.
         // http requests from react and response from asp.net.
@@ -81,19 +121,28 @@ public class Program
             });
         }
         
+        // routing should be before rate limiting.
+        app.UseRouting();
+        
         // invoke application after built by builder. 
         app.UseCors("ReactFrontend");
         
+        app.UseRateLimiter();
+        
+        // rate limits to 60 requests per minute.
+        var api = app.MapGroup("/api")
+            .RequireRateLimiting(ApiRateLimitPolicy);
+        
         // asp.net api endpoints. define url from which react can get data.
         // text records from database context.
-        app.MapGet("/api/text-records", async (GameTextDbContext db) =>
+        api.MapGet("/text-records", async (GameTextDbContext db) =>
         {
             List<TextRecord> records = await db.TextRecords.ToListAsync();
             return Results.Ok(records);
         });
 
         // search function from search service to search database. 
-        app.MapGet("/api/search",
+        api.MapGet("/search",
                 async (
                     string query,
                     int page,
@@ -128,7 +177,7 @@ public class Program
             .Produces<PagedResult<SearchResult>>(StatusCodes.Status200OK);
         
         // directly get record from database via global identifier. 
-        app.MapGet("/api/records/{id}",
+        api.MapGet("/records/{id}",
                 async (
                     Guid id,
                     GameTextDbContext db) =>
